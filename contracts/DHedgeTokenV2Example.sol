@@ -3,7 +3,6 @@ pragma solidity ^0.4.26;
 import "./DHedgeTokenV1.sol";
 
 contract DHedgeTokenV2Example is DHedgeTokenV1 {
-
     uint256 public receivedEther;
 
     function initialize() public {
@@ -24,7 +23,7 @@ contract DHedgeTokenV2Example is DHedgeTokenV1 {
         receivedEther += msg.value;
     }
 
-    function receivedEther() public view returns (uint256){
+    function receivedEther() public view returns (uint256) {
         return receivedEther;
     }
 }

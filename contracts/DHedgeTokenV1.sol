@@ -25,7 +25,11 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
     using SafeMath for uint256;
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
-    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+    event Approval(
+        address indexed _owner,
+        address indexed _spender,
+        uint256 _value
+    );
 
     string internal name_;
     string internal symbol_;
@@ -49,7 +53,7 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
         name_ = "dHedge DAO Token";
         symbol_ = "DHT";
         decimals_ = 18;
-        totalSupply_ = 100000000 * (10 ** uint256(decimals_));
+        totalSupply_ = 100000000 * (10**uint256(decimals_));
         balances[tokenOwner] = totalSupply_;
         emit Transfer(address(0), tokenOwner, totalSupply_);
         owner = tokenOwner;
@@ -78,7 +82,11 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      * @param _to address The address which you want to transfer to
      * @param _value uint256 the amount of tokens to be transferred
      */
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns (bool) {
         require(_to != address(0));
         require(_value <= balances[_from]);
         require(_value <= allowed[_from][msg.sender]);
@@ -111,7 +119,11 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      * @param _spender address The address which will spend the funds.
      * @return A uint256 specifying the amount of tokens still available for the spender.
      */
-    function allowance(address _owner, address _spender) public view returns (uint256) {
+    function allowance(address _owner, address _spender)
+        public
+        view
+        returns (uint256)
+    {
         return allowed[_owner][_spender];
     }
 
@@ -125,8 +137,13 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      * @param _spender The address which will spend the funds.
      * @param _addedValue The amount of tokens to increase the allowance by.
      */
-    function increaseApproval(address _spender, uint _addedValue) public returns (bool) {
-        allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(_addedValue);
+    function increaseApproval(address _spender, uint256 _addedValue)
+        public
+        returns (bool)
+    {
+        allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(
+            _addedValue
+        );
         emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
         return true;
     }
@@ -141,8 +158,11 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      * @param _spender The address which will spend the funds.
      * @param _subtractedValue The amount of tokens to decrease the allowance by.
      */
-    function decreaseApproval(address _spender, uint _subtractedValue) public returns (bool) {
-        uint oldValue = allowed[msg.sender][_spender];
+    function decreaseApproval(address _spender, uint256 _subtractedValue)
+        public
+        returns (bool)
+    {
+        uint256 oldValue = allowed[msg.sender][_spender];
         if (_subtractedValue > oldValue) {
             allowed[msg.sender][_spender] = 0;
         } else {
@@ -158,9 +178,18 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      * @param _value The amount of tokens to send
      * @param _data Extra data to be sent to the recipient contract function
      */
-    function approveAndCall(address _recipient, uint _value, bytes _data) public returns (bool) {
+    function approveAndCall(
+        address _recipient,
+        uint256 _value,
+        bytes _data
+    ) public returns (bool) {
         allowed[msg.sender][_recipient] = _value;
-        ApproveAndCall(_recipient).receiveApproval(msg.sender, _value, address(this), _data);
+        ApproveAndCall(_recipient).receiveApproval(
+            msg.sender,
+            _value,
+            address(this),
+            _data
+        );
         emit Approval(msg.sender, _recipient, allowed[msg.sender][_recipient]);
         return true;
     }

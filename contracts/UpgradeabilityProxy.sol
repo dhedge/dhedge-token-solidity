@@ -1,6 +1,6 @@
 pragma solidity ^0.4.26;
 
-import './Proxy.sol';
+import "./Proxy.sol";
 
 /**
  * @title UpgradeabilityProxy
@@ -20,7 +20,8 @@ contract UpgradeabilityProxy is Proxy {
      * This is the keccak-256 hash of "org.zeppelinos.proxy.implementation", and is
      * validated in the constructor.
      */
-    bytes32 private constant IMPLEMENTATION_SLOT = 0x7050c9e0f4ca769c69bd3a8ef740bc37934f8e2c036e5a723fd8ee048ed3f8c3;
+    bytes32
+        private constant IMPLEMENTATION_SLOT = 0x7050c9e0f4ca769c69bd3a8ef740bc37934f8e2c036e5a723fd8ee048ed3f8c3;
 
     /**
      * @dev Contract constructor.
@@ -31,9 +32,12 @@ contract UpgradeabilityProxy is Proxy {
      * This parameter is optional, if no data is given the initialization call to proxied contract will be skipped.
      */
     constructor(address _implementation, bytes memory _data) public payable {
-        assert(IMPLEMENTATION_SLOT == keccak256("org.zeppelinos.proxy.implementation"));
+        assert(
+            IMPLEMENTATION_SLOT ==
+                keccak256("org.zeppelinos.proxy.implementation")
+        );
         _setImplementation(_implementation);
-        if(_data.length > 0) {
+        if (_data.length > 0) {
             require(_implementation.delegatecall(_data));
         }
     }
@@ -63,7 +67,10 @@ contract UpgradeabilityProxy is Proxy {
      * @param newImplementation Address of the new implementation.
      */
     function _setImplementation(address newImplementation) private {
-        require(isContract(newImplementation), "Cannot set a proxy implementation to a non-contract address");
+        require(
+            isContract(newImplementation),
+            "Cannot set a proxy implementation to a non-contract address"
+        );
 
         bytes32 slot = IMPLEMENTATION_SLOT;
 
@@ -88,7 +95,9 @@ contract UpgradeabilityProxy is Proxy {
         // Check this again before the Serenity release, because all addresses will be
         // contracts then.
         // solium-disable-next-line security/no-inline-assembly
-        assembly { size := extcodesize(account) }
+        assembly {
+            size := extcodesize(account)
+        }
         return size > 0;
     }
 }

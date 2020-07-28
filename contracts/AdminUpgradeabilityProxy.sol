@@ -1,6 +1,6 @@
 pragma solidity ^0.4.26;
 
-import './UpgradeabilityProxy.sol';
+import "./UpgradeabilityProxy.sol";
 
 /**
  * @title AdminUpgradeabilityProxy
@@ -23,7 +23,8 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
      * This is the keccak-256 hash of "org.zeppelinos.proxy.admin", and is
      * validated in the constructor.
      */
-    bytes32 private constant ADMIN_SLOT = 0x10d6a54a4754c8869d6886b5f5d7fbfa5b4522237ea5c60d11bc4e7a1ff9390b;
+    bytes32
+        private constant ADMIN_SLOT = 0x10d6a54a4754c8869d6886b5f5d7fbfa5b4522237ea5c60d11bc4e7a1ff9390b;
 
     /**
      * @dev Modifier to check whether the `msg.sender` is the admin.
@@ -47,7 +48,11 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
      * https://solidity.readthedocs.io/en/v0.4.24/abi-spec.html#function-selector-and-argument-encoding.
      * This parameter is optional, if no data is given the initialization call to proxied contract will be skipped.
      */
-    constructor(address _implementation, bytes _data) UpgradeabilityProxy(_implementation, _data) public payable {
+    constructor(address _implementation, bytes _data)
+        public
+        payable
+        UpgradeabilityProxy(_implementation, _data)
+    {
         assert(ADMIN_SLOT == keccak256("org.zeppelinos.proxy.admin"));
 
         _setAdmin(msg.sender);
@@ -73,7 +78,10 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
      * @param newAdmin Address to transfer proxy administration to.
      */
     function changeAdmin(address newAdmin) external ifAdmin {
-        require(newAdmin != address(0), "Cannot change the admin of a proxy to the zero address");
+        require(
+            newAdmin != address(0),
+            "Cannot change the admin of a proxy to the zero address"
+        );
         emit AdminChanged(_admin(), newAdmin);
         _setAdmin(newAdmin);
     }
@@ -96,7 +104,11 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
      * It should include the signature and the parameters of the function to be called, as described in
      * https://solidity.readthedocs.io/en/v0.4.24/abi-spec.html#function-selector-and-argument-encoding.
      */
-    function upgradeToAndCall(address newImplementation, bytes data) payable external ifAdmin {
+    function upgradeToAndCall(address newImplementation, bytes data)
+        external
+        payable
+        ifAdmin
+    {
         _upgradeTo(newImplementation);
         require(newImplementation.delegatecall(data));
     }
@@ -127,7 +139,10 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
      * @dev Only fall back when the sender is not the admin.
      */
     function _willFallback() internal {
-        require(msg.sender != _admin(), "Cannot call fallback function from the proxy admin");
+        require(
+            msg.sender != _admin(),
+            "Cannot call fallback function from the proxy admin"
+        );
         super._willFallback();
     }
 }
