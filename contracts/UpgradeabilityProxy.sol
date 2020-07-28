@@ -1,6 +1,6 @@
 pragma solidity ^0.4.26;
 
-import './Proxy.sol';
+import "./Proxy.sol";
 
 /**
  * @title UpgradeabilityProxy
@@ -20,7 +20,8 @@ contract UpgradeabilityProxy is Proxy {
      * This is the keccak-256 hash of "org.zeppelinos.proxy.implementation", and is
      * validated in the constructor.
      */
-    bytes32 private constant IMPLEMENTATION_SLOT = 0x7050c9e0f4ca769c69bd3a8ef740bc37934f8e2c036e5a723fd8ee048ed3f8c3;
+    bytes32
+        private constant _IMPLEMENTATION_SLOT = 0x7050c9e0f4ca769c69bd3a8ef740bc37934f8e2c036e5a723fd8ee048ed3f8c3;
 
     /**
      * @dev Contract constructor.
@@ -31,9 +32,13 @@ contract UpgradeabilityProxy is Proxy {
      * This parameter is optional, if no data is given the initialization call to proxied contract will be skipped.
      */
     constructor(address _implementation, bytes memory _data) public payable {
-        assert(IMPLEMENTATION_SLOT == keccak256("org.zeppelinos.proxy.implementation"));
+        assert(
+            _IMPLEMENTATION_SLOT ==
+                keccak256("org.zeppelinos.proxy.implementation")
+        );
         _setImplementation(_implementation);
-        if(_data.length > 0) {
+        if (_data.length > 0) {
+            // solhint-disable-next-line avoid-low-level-calls
             require(_implementation.delegatecall(_data));
         }
     }
@@ -43,7 +48,8 @@ contract UpgradeabilityProxy is Proxy {
      * @return Address of the current implementation
      */
     function _implementation() internal view returns (address impl) {
-        bytes32 slot = IMPLEMENTATION_SLOT;
+        bytes32 slot = _IMPLEMENTATION_SLOT;
+        // solhint-disable-next-line no-inline-assembly
         assembly {
             impl := sload(slot)
         }
@@ -63,10 +69,13 @@ contract UpgradeabilityProxy is Proxy {
      * @param newImplementation Address of the new implementation.
      */
     function _setImplementation(address newImplementation) private {
-        require(isContract(newImplementation), "Cannot set a proxy implementation to a non-contract address");
+        require(
+            _isContract(newImplementation),
+            "Cannot set a proxy implementation to a non-contract address"
+        );
 
-        bytes32 slot = IMPLEMENTATION_SLOT;
-
+        bytes32 slot = _IMPLEMENTATION_SLOT;
+        // solhint-disable-next-line no-inline-assembly
         assembly {
             sstore(slot, newImplementation)
         }
@@ -79,7 +88,7 @@ contract UpgradeabilityProxy is Proxy {
      * @param account address of the account to check
      * @return whether the target address is a contract
      */
-    function isContract(address account) internal view returns (bool) {
+    function _isContract(address account) internal view returns (bool) {
         uint256 size;
         // XXX Currently there is no better way to check if there is a contract in an address
         // than to check the size of the code at that address.
@@ -87,8 +96,10 @@ contract UpgradeabilityProxy is Proxy {
         // for more details about how this works.
         // Check this again before the Serenity release, because all addresses will be
         // contracts then.
-        // solium-disable-next-line security/no-inline-assembly
-        assembly { size := extcodesize(account) }
+        // solhint-disable-next-line no-inline-assembly
+        assembly {
+            size := extcodesize(account)
+        }
         return size > 0;
     }
 }

@@ -12,7 +12,7 @@ contract Proxy {
      * @dev Fallback function.
      * Implemented entirely in `_fallback`.
      */
-    function () payable external {
+    function() external payable {
         _fallback();
     }
 
@@ -28,23 +28,35 @@ contract Proxy {
      * @param implementation Address to delegate.
      */
     function _delegate(address implementation) internal {
+        // solhint-disable-next-line no-inline-assembly
         assembly {
-        // Copy msg.data. We take full control of memory in this inline assembly
-        // block because it will not return to Solidity code. We overwrite the
-        // Solidity scratch pad at memory position 0.
+            // Copy msg.data. We take full control of memory in this inline assembly
+            // block because it will not return to Solidity code. We overwrite the
+            // Solidity scratch pad at memory position 0.
             calldatacopy(0, 0, calldatasize)
 
-        // Call the implementation.
-        // out and outsize are 0 because we don't know the size yet.
-            let result := delegatecall(gas, implementation, 0, calldatasize, 0, 0)
+            // Call the implementation.
+            // out and outsize are 0 because we don't know the size yet.
+            let result := delegatecall(
+                gas,
+                implementation,
+                0,
+                calldatasize,
+                0,
+                0
+            )
 
-        // Copy the returned data.
+            // Copy the returned data.
             returndatacopy(0, 0, returndatasize)
 
             switch result
-            // delegatecall returns 0 on error.
-            case 0 { revert(0, returndatasize) }
-            default { return(0, returndatasize) }
+                // delegatecall returns 0 on error.
+                case 0 {
+                    revert(0, returndatasize)
+                }
+                default {
+                    return(0, returndatasize)
+                }
         }
     }
 
@@ -53,8 +65,7 @@ contract Proxy {
      * Can be redefined in derived contracts to add functionality.
      * Redefinitions must call super._willFallback().
      */
-    function _willFallback() internal {
-    }
+    function _willFallback() internal {}
 
     /**
      * @dev fallback implementation.

@@ -1,0 +1,15 @@
+{
+    "extends": "solhint:recommended",
+    "rules": {
+        "prettier/prettier": "error",
+        "func-order": "off",
+        "mark-callable-contracts": "off",
+        "no-empty-blocks": "off",
+        "compiler-version": ["error", "^0.4.0"],
+        "private-vars-leading-underscore": "error",
+        "avoid-throw": "off",
+        "avoid-suicide": "error",
+        "avoid-sha3": "warn"
+    },
+    "plugins": ["prettier"]
+}
