@@ -31,15 +31,15 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
         uint256 _value
     );
 
-    string internal name_;
-    string internal symbol_;
-    uint8 internal decimals_;
-    uint256 internal totalSupply_;
-    mapping(address => uint256) internal balances;
-    mapping(address => mapping(address => uint256)) internal allowed;
+    string internal _name;
+    string internal _symbol;
+    uint8 internal _decimals;
+    uint256 internal _totalSupply;
+    mapping(address => uint256) internal _balances;
+    mapping(address => mapping(address => uint256)) internal _allowed;
 
-    uint256 internal version_;
-    mapping(uint256 => bool) internal initialized;
+    uint256 internal _version;
+    mapping(uint256 => bool) internal _initialized;
 
     /**
      * @dev Initialisation method representing a constructor in the DELEGATECALL proxy pattern, callable only once.
@@ -48,17 +48,17 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      * Parameter tokenOwner should be different then the proxy admin, otherwise the calls will not be delegated.
      */
     function initialize(address tokenOwner) public {
-        version_ = 1;
-        require(!initialized[version_]);
-        name_ = "dHedge DAO Token";
-        symbol_ = "DHT";
-        decimals_ = 18;
-        totalSupply_ = 100000000 * (10**uint256(decimals_));
-        balances[tokenOwner] = totalSupply_;
-        emit Transfer(address(0), tokenOwner, totalSupply_);
+        _version = 1;
+        require(!_initialized[_version]);
+        _name = "dHedge DAO Token";
+        _symbol = "DHT";
+        _decimals = 18;
+        _totalSupply = 100000000 * (10**uint256(_decimals));
+        _balances[tokenOwner] = _totalSupply;
+        emit Transfer(address(0), tokenOwner, _totalSupply);
         owner = tokenOwner;
 
-        initialized[version_] = true;
+        _initialized[_version] = true;
     }
 
     /**
@@ -68,10 +68,10 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      */
     function transfer(address _to, uint256 _value) public returns (bool) {
         require(_to != address(0));
-        require(_value <= balances[msg.sender]);
+        require(_value <= _balances[msg.sender]);
         // SafeMath.sub will throw if there is not enough balance.
-        balances[msg.sender] = balances[msg.sender].sub(_value);
-        balances[_to] = balances[_to].add(_value);
+        _balances[msg.sender] = _balances[msg.sender].sub(_value);
+        _balances[_to] = _balances[_to].add(_value);
         emit Transfer(msg.sender, _to, _value);
         return true;
     }
@@ -88,11 +88,11 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
         uint256 _value
     ) public returns (bool) {
         require(_to != address(0));
-        require(_value <= balances[_from]);
-        require(_value <= allowed[_from][msg.sender]);
-        balances[_from] = balances[_from].sub(_value);
-        balances[_to] = balances[_to].add(_value);
-        allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);
+        require(_value <= _balances[_from]);
+        require(_value <= _allowed[_from][msg.sender]);
+        _balances[_from] = _balances[_from].sub(_value);
+        _balances[_to] = _balances[_to].add(_value);
+        _allowed[_from][msg.sender] = _allowed[_from][msg.sender].sub(_value);
         emit Transfer(_from, _to, _value);
         return true;
     }
@@ -108,13 +108,13 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      * @param _value The amount of tokens to be spent.
      */
     function approve(address _spender, uint256 _value) public returns (bool) {
-        allowed[msg.sender][_spender] = _value;
+        _allowed[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value);
         return true;
     }
 
     /**
-     * @dev Function to check the amount of tokens that an owner allowed to a spender.
+     * @dev Function to check the amount of tokens that an owner _allowed to a spender.
      * @param _owner address The address which owns the funds.
      * @param _spender address The address which will spend the funds.
      * @return A uint256 specifying the amount of tokens still available for the spender.
@@ -124,14 +124,14 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
         view
         returns (uint256)
     {
-        return allowed[_owner][_spender];
+        return _allowed[_owner][_spender];
     }
 
     /**
-     * @dev Increase the amount of tokens that an owner allowed to a spender.
+     * @dev Increase the amount of tokens that an owner _allowed to a spender.
      *
-     * approve should be called when allowed[_spender] == 0. To increment
-     * allowed value is better to use this function to avoid 2 calls (and wait until
+     * approve should be called when _allowed[_spender] == 0. To increment
+     * _allowed value is better to use this function to avoid 2 calls (and wait until
      * the first transaction is mined)
      * From MonolithDAO Token.sol
      * @param _spender The address which will spend the funds.
@@ -141,18 +141,18 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
         public
         returns (bool)
     {
-        allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(
+        _allowed[msg.sender][_spender] = _allowed[msg.sender][_spender].add(
             _addedValue
         );
-        emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
+        emit Approval(msg.sender, _spender, _allowed[msg.sender][_spender]);
         return true;
     }
 
     /**
-     * @dev Decrease the amount of tokens that an owner allowed to a spender.
+     * @dev Decrease the amount of tokens that an owner _allowed to a spender.
      *
-     * approve should be called when allowed[_spender] == 0. To decrement
-     * allowed value is better to use this function to avoid 2 calls (and wait until
+     * approve should be called when _allowed[_spender] == 0. To decrement
+     * _allowed value is better to use this function to avoid 2 calls (and wait until
      * the first transaction is mined)
      * From MonolithDAO Token.sol
      * @param _spender The address which will spend the funds.
@@ -162,13 +162,13 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
         public
         returns (bool)
     {
-        uint256 oldValue = allowed[msg.sender][_spender];
+        uint256 oldValue = _allowed[msg.sender][_spender];
         if (_subtractedValue > oldValue) {
-            allowed[msg.sender][_spender] = 0;
+            _allowed[msg.sender][_spender] = 0;
         } else {
-            allowed[msg.sender][_spender] = oldValue.sub(_subtractedValue);
+            _allowed[msg.sender][_spender] = oldValue.sub(_subtractedValue);
         }
-        emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
+        emit Approval(msg.sender, _spender, _allowed[msg.sender][_spender]);
         return true;
     }
 
@@ -183,14 +183,14 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
         uint256 _value,
         bytes _data
     ) public returns (bool) {
-        allowed[msg.sender][_recipient] = _value;
+        _allowed[msg.sender][_recipient] = _value;
         ApproveAndCall(_recipient).receiveApproval(
             msg.sender,
             _value,
             address(this),
             _data
         );
-        emit Approval(msg.sender, _recipient, allowed[msg.sender][_recipient]);
+        emit Approval(msg.sender, _recipient, _allowed[msg.sender][_recipient]);
         return true;
     }
 
@@ -199,10 +199,10 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      * @param _value The amount of token to be burned.
      */
     function burn(uint256 _value) public returns (bool) {
-        require(_value <= balances[msg.sender]);
+        require(_value <= _balances[msg.sender]);
         address burner = msg.sender;
-        balances[burner] = balances[burner].sub(_value);
-        totalSupply_ = totalSupply_.sub(_value);
+        _balances[burner] = _balances[burner].sub(_value);
+        _totalSupply = _totalSupply.sub(_value);
         emit Transfer(burner, address(0), _value);
         return true;
     }
@@ -213,7 +213,7 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      * @return An uint256 representing the amount owned by the passed address.
      */
     function balanceOf(address _owner) public view returns (uint256) {
-        return balances[_owner];
+        return _balances[_owner];
     }
 
     /**
@@ -221,7 +221,7 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      * @return An uint256 representing the total supply of the token.
      */
     function totalSupply() public view returns (uint256) {
-        return totalSupply_;
+        return _totalSupply;
     }
 
     /**
@@ -229,7 +229,7 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      * @return A string representing the name of the token.
      */
     function name() public view returns (string) {
-        return name_;
+        return _name;
     }
 
     /**
@@ -237,7 +237,7 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      * @return A string representing the symbol of the token.
      */
     function symbol() public view returns (string) {
-        return symbol_;
+        return _symbol;
     }
 
     /**
@@ -245,7 +245,7 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      * @return An uint8 representing the decimals of the token.
      */
     function decimals() public view returns (uint8) {
-        return decimals_;
+        return _decimals;
     }
 
     /**
@@ -253,6 +253,6 @@ contract DHedgeTokenV1 is Ownable, ERC20 {
      * @return An uint256 representing the version of the token contract.
      */
     function version() public view returns (uint256) {
-        return version_;
+        return _version;
     }
 }

@@ -24,7 +24,7 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
      * validated in the constructor.
      */
     bytes32
-        private constant ADMIN_SLOT = 0x10d6a54a4754c8869d6886b5f5d7fbfa5b4522237ea5c60d11bc4e7a1ff9390b;
+        private constant _ADMIN_SLOT = 0x10d6a54a4754c8869d6886b5f5d7fbfa5b4522237ea5c60d11bc4e7a1ff9390b;
 
     /**
      * @dev Modifier to check whether the `msg.sender` is the admin.
@@ -53,7 +53,7 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
         payable
         UpgradeabilityProxy(_implementation, _data)
     {
-        assert(ADMIN_SLOT == keccak256("org.zeppelinos.proxy.admin"));
+        assert(_ADMIN_SLOT == keccak256("org.zeppelinos.proxy.admin"));
 
         _setAdmin(msg.sender);
     }
@@ -110,6 +110,7 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
         ifAdmin
     {
         _upgradeTo(newImplementation);
+        // solhint-disable-next-line avoid-low-level-calls
         require(newImplementation.delegatecall(data));
     }
 
@@ -117,7 +118,9 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
      * @return The admin slot.
      */
     function _admin() internal view returns (address adm) {
-        bytes32 slot = ADMIN_SLOT;
+        bytes32 slot = _ADMIN_SLOT;
+
+        // solhint-disable-next-line no-inline-assembly
         assembly {
             adm := sload(slot)
         }
@@ -128,8 +131,9 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
      * @param newAdmin Address of the new proxy admin.
      */
     function _setAdmin(address newAdmin) internal {
-        bytes32 slot = ADMIN_SLOT;
+        bytes32 slot = _ADMIN_SLOT;
 
+        // solhint-disable-next-line no-inline-assembly
         assembly {
             sstore(slot, newAdmin)
         }
