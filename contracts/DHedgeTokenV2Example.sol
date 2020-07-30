@@ -6,12 +6,12 @@ contract DHedgeTokenV2Example is DHedgeTokenV1 {
     uint256 public receivedEther;
 
     function initialize() public {
-        version_ = 2;
-        require(!initialized[version_]);
-        name_ = "DHedge  DAO Token Token New Version";
+        _version = 2;
+        require(!_initialized[_version]);
+        _name = "DHedge  DAO Token Token New Version";
         receivedEther = 0;
 
-        initialized[version_] = true;
+        _initialized[_version] = true;
     }
 
     function brandNewFunction() public pure returns (string) {
