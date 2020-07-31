@@ -1,7 +1,6 @@
 const DHedgeTokenProxy = artifacts.require('./DHedgeTokenProxy.sol');
 const DHedgeTokenV1 = artifacts.require('./DHedgeTokenV1.sol');
 const DHedgeTokenV2Example = artifacts.require('./DHedgeTokenV2Example.sol');
-const ApproveAndCallMock = artifacts.require('./test/ApproveAndCallMock.sol');
 const BigNumber = require('bignumber.js');
 
 let tokenOwner;
@@ -120,7 +119,6 @@ contract('DHedgeTokenTest', (accounts) => {
         assert(tokenOwner === await token.owner.call({from: user1}), "token admin doesn't match");
     });
 
-
     it("Can transfer tokens to any address", async () => {
         let tokenBalanceUserBefore = await token.balanceOf.call(user1);
         await token.transfer(user1, oneToken, {from: tokenOwner});
@@ -149,24 +147,6 @@ contract('DHedgeTokenTest', (accounts) => {
             assert(false);
         } catch (e) {
             expectRevert(e, "token doesn't accept ether");
-        }
-    });
-
-    it("ApproveAndCall works correctly", async () => {
-        let mock = await ApproveAndCallMock.new();
-        let failingMock = await DHedgeTokenV1.new();
-
-        assert(await token.approveAndCall(mock.address, oneToken, '0x0'));
-
-        assert(oneToken.isEqualTo(await mock.amount.call()), "amount matches");
-        assert(tokenOwner === await mock.from.call(), "from matches");
-        assert(token.address === await mock.tokenContract.call(), "token matches");
-
-        try {
-            await token.approveAndCall(failingMock.address, oneToken, '0x0');
-            assert(false);
-        } catch (e) {
-            expectRevert(e, "token doesn't implement token fallback");
         }
     });
 

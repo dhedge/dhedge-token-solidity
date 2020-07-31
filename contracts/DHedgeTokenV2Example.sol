@@ -1,15 +1,15 @@
-pragma solidity ^0.4.26;
+pragma solidity ^0.5.0;
 
 import "./DHedgeTokenV1.sol";
 
 contract DHedgeTokenV2Example is DHedgeTokenV1 {
-    uint256 public receivedEther;
+    uint256 public _receivedEther;
 
     function initialize() public {
         version_ = 2;
         require(!initialized[version_]);
         name_ = "DHedge  DAO Token Token New Version";
-        receivedEther = 0;
+        _receivedEther = 0;
 
         initialized[version_] = true;
     }
@@ -20,10 +20,10 @@ contract DHedgeTokenV2Example is DHedgeTokenV1 {
 
     //can receive ether
     function brandNewPayableFunction() public payable {
-        receivedEther += msg.value;
+        _receivedEther += msg.value;
     }
 
     function receivedEther() public view returns (uint256) {
-        return receivedEther;
+        return _receivedEther;
     }
 }
