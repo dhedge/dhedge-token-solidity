@@ -22,9 +22,7 @@ import "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol";
 contract DHedgeTokenV1 is Initializable, ERC20BurnableUpgradeSafe {
     uint256 public version;
 
-    function __DHedgeTokenV1_init(
-        address initialAccount
-    ) public initializer {
+    function __DHedgeTokenV1_init(address initialAccount) public initializer {
         __Context_init_unchained();
         __ERC20_init_unchained("dHedge DAO Token", "DHT");
         __ERC20Burnable_init_unchained();
