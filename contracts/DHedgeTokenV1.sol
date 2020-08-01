@@ -1,8 +1,7 @@
 pragma solidity ^0.6.0;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20Detailed.sol";
-import "@openzeppelin/contracts/ownership/Ownable.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20Burnable.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol";
 
 // ---------------------------------------------------------------------
 // dHedge DAO ERC20 Token - https://dhedge.org
@@ -20,36 +19,26 @@ import "@openzeppelin/contracts/ownership/Ownable.sol";
 //
 // ---------------------------------------------------------------------
 
-contract DHedgeTokenV1 is Ownable, ERC20, ERC20Detailed {
+contract DHedgeTokenV1 is Initializable, ERC20BurnableUpgradeSafe {
+    uint256 public version;
 
-    uint256 internal _version;
-    mapping(uint256 => bool) internal _initialized;
-
-    /**
-     * @dev Initialisation method representing a constructor in the DELEGATECALL proxy pattern, callable only once.
-     * @param tokenOwner The address of the token owner, also holding initially minted tokens
-     *
-     * Parameter tokenOwner should be different then the proxy admin, otherwise the calls will not be delegated.
-     */
-    function initialize(address tokenOwner) public {
-        _version = 1;
-        require(!_initialized[_version]);
-        _name = "dHedge DAO Token";
-        _symbol = "DHT";
-        _decimals = 18;
-        _totalSupply = 100000000 * (10**uint256(_decimals));
-        _balances[tokenOwner] = _totalSupply;
-        emit Transfer(address(0), tokenOwner, _totalSupply);
-        owner = tokenOwner;
-
-        _initialized[_version] = true;
+    function __DHedgeTokenV1_init(
+        address initialAccount
+    ) public initializer {
+        __Context_init_unchained();
+        __ERC20_init_unchained("dHedge DAO Token", "DHT");
+        __ERC20Burnable_init_unchained();
+        __DHedgeTokenV1_init_unchained(initialAccount, 100000000 * (10**18));
     }
 
-    /**
-     * @dev Gets the version of the token contract.
-     * @return An uint256 representing the version of the token contract.
-     */
-    function version() public view returns (uint256) {
-        return _version;
+    function __DHedgeTokenV1_init_unchained(
+        address initialAccount,
+        uint256 initialBalance
+    ) internal initializer {
+        version = 1;
+
+        _mint(initialAccount, initialBalance);
     }
+
+    uint256[50] private __gap;
 }
