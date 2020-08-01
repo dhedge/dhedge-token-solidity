@@ -1,6 +1,6 @@
 pragma solidity ^0.6.0;
 
-import "@openzeppelin/upgrades/contracts/upgradeability/AdminUpgradeabilityProxy.sol";
+import "./AdminUpgradeabilityProxy.sol";
 
 // ---------------------------------------------------------------------
 // dHedge DAO Token Proxy - https://dhedge.org
@@ -15,6 +15,6 @@ contract DHedgeTokenProxy is AdminUpgradeabilityProxy {
     constructor(address _implementation, bytes memory _data)
         public
         payable
-        AdminUpgradeabilityProxy(_implementation, _data)
+        AdminUpgradeabilityProxy(_implementation, msg.sender, _data)
     {}
 }
