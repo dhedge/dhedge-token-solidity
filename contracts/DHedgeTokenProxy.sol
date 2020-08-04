@@ -1,4 +1,4 @@
-pragma solidity ^0.4.26;
+pragma solidity ^0.6.0;
 
 import "./AdminUpgradeabilityProxy.sol";
 
@@ -12,9 +12,9 @@ import "./AdminUpgradeabilityProxy.sol";
 // ---------------------------------------------------------------------
 
 contract DHedgeTokenProxy is AdminUpgradeabilityProxy {
-    constructor(address _implementation, bytes _data)
+    constructor(address _implementation, bytes memory _data)
         public
         payable
-        AdminUpgradeabilityProxy(_implementation, _data)
+        AdminUpgradeabilityProxy(_implementation, msg.sender, _data)
     {}
 }
