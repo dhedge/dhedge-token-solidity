@@ -14,9 +14,6 @@ import "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol";
 //
 // Notes          : This token is upgradable using CALLDELEGATE pattern (courtesy of https://openzeppelin.org/).
 //                  It should NOT be accessed directly but through the proxy contract address using this contract's ABI.
-//                  Initially only addresses with transferGrant can transfer the tokens.
-//                  Once transferable flag is turned on, everyone can transfer freely.
-//
 // ---------------------------------------------------------------------
 
 contract DHedgeTokenV1 is Initializable, ERC20BurnableUpgradeSafe {
