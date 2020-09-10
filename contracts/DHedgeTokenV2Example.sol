@@ -2,21 +2,12 @@ pragma solidity ^0.6.0;
 
 import "./DHedgeTokenV1.sol";
 
-// dHedge DAO - https://dhedge.org
-//
-//      _ _   _           _
-//     ( ) ) ( )         ( )
-//    _| | |_| |  __    _| |  __    __
-//  / _  |  _  |/ __ \/ _  |/ _  \/ __ \
-// ( (_| | | | |  ___/ (_| | (_) |  ___/
-//  \__ _)_) (_)\____)\__ _)\__  |\____)
-//                         ( )_) |
-//                          \___/
+// dHEDGE DAO - https://dhedge.org
 //
 // MIT License
 // ===========
 //
-// Copyright (c) 2020 dHedge
+// Copyright (c) 2020 dHEDGE DAO
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
