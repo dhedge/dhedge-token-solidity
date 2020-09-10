@@ -26,6 +26,7 @@
     "prettier": "^2.0.5",
     "prettier-plugin-solidity": "^1.0.0-alpha.54",
     "solhint": "^3.1.0",
-    "solhint-plugin-prettier": "0.0.4"
+    "solhint-plugin-prettier": "0.0.4",
+    "truffle-plugin-verify": "^0.4.0"
   }
 }
