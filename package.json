@@ -20,7 +20,7 @@
     "@truffle/hdwallet-provider": "^1.0.43",
     "bignumber.js": "^9.0.0",
     "dotenv": "^8.2.0",
-    "truffle": "^5.1.31"
+    "truffle": "^5.7.1"
   },
   "devDependencies": {
     "prettier": "^2.0.5",
